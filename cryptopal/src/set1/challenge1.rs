@@ -1,3 +1,26 @@
+//! Cryptopals Set 1, Challenge 1: Convert hex to base64
+//! 
+//! # Overall Strategy
+//! 1. **Hex to Bytes**: Parse the incoming hex string into raw bytes. To avoid bulky lookup tables, 
+//!    we use an O(1) ASCII math trick (e.g., subtracting `b'0'` or `b'a'`) to find the numeric value.
+//! 2. **Bytes to Base64**: Group the raw bytes into 3-byte (24-bit) chunks. Bit-shift these 
+//!    24 bits into four 6-bit values. Map each 6-bit value to the Base64 alphabet, padding 
+//!    with `=` if the input bytes don't divide evenly by 3.
+//!
+//! # Core Cypherpunk Lessons Learned
+//! 1. **Encodings are just repackaging**: Different encoding schemes are simply different ways 
+//!    to pack the same bytes. Conversion boils down to extracting raw bytes and splitting 
+//!    them again into another scheme.
+//! 2. **Think in bits and bytes**: When programming from a high level, we think in objects. 
+//!    In cryptography, we must think in raw bits and bytes to understand data flow.
+//! 3. **Encoding is NOT Encryption**: Base64 and Hex obscure data to the human eye, but offer 
+//!    zero cryptographic security. It's strictly for format compatibility.
+//! 4. **Padding is where attackers live**: Math is perfect, but data has physical boundaries. 
+//!    Edge cases and padding logic (like the `=` in Base64) are often the weakest links in an algorithm.
+//! 5. **High-level abstractions leak info**: High-level operations (like standard string comparisons) 
+//!    often fail-fast, leaking timing data. Controlling the raw bytes allows us to write secure, 
+//!    constant-time code.
+
 const BASE64_ALPHABET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 pub fn hex_to_base64(hex_string: &str) -> String {
